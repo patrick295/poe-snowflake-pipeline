@@ -343,17 +343,6 @@ docs/
   dashboard_screenshot.png
 README.md
 ```
-
----
-
-## Suggested build order
-
-1. Snowflake account + warehouse/database/schema setup
-2. S3 bucket + upload Olist CSVs
-3. Storage integration + IAM role trust policy — this is the step most people get stuck on, budget real time for it
-4. Stage + file format + `LIST @stage` to confirm connectivity
-5. Raw table DDL + `COPY INTO` for all 6 tables, verify row counts
-6. Star schema build
 7. KPI queries — sanity check the numbers look plausible before building the dashboard on top
 8. Stream + Task for automated refresh
 9. Power BI dashboard
