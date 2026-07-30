@@ -1,3 +1,5 @@
+ --storage integration
+
 CREATE STORAGE INTEGRATION s3_poe_integration
   TYPE = EXTERNAL_STAGE
   STORAGE_PROVIDER = 'S3'
