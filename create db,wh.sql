@@ -1,5 +1,7 @@
 -- Create POE warehouse, database, schemas, file format, and stage
--- Co-authored with CoCo
+
+--infrastructure setup
+
 CREATE WAREHOUSE IF NOT EXISTS poe_wh WITH WAREHOUSE_SIZE ='XSMALL' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE;
 CREATE DATABASE IF NOT EXISTS poe_db;
 CREATE SCHEMA IF NOT EXISTS poe_db.raw;

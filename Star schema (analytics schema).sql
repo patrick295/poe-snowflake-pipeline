@@ -91,3 +91,32 @@ SELECT COUNT(*) FROM analytics.fact_orders;
 SELECT order_id, order_delivered_customer_date, order_status, review_score, price, freight_value
 FROM analytics.fact_orders
 LIMIT 20;
+
+
+
+
+This file builds a **star schema** — restructuring your raw data into a shape optimized for analytics queries and dashboards.
+
+**Dimension Tables (lookup tables)**
+
+- **`dim_customer`** — one row per unique customer with their city and state
+- **`dim_seller`** — one row per unique seller with their city and state
+- **`dim_product`** — one row per unique product with its category name
+- **`dim_date`** — a generated calendar table covering ~3.3 years (1,200 days from 2016-01-01). Uses `GENERATOR(ROWCOUNT=>1200)` + `seq4()` to produce sequential integers, then adds them as days to a start date. Includes year, month, day, and day-of-week for easy time-based grouping.
+
+**Fact Table (transactional metrics)**
+
+**`fact_orders`** joins three raw tables together:
+- `raw.orders` — order-level info (status, timestamps)
+- `raw.order_items` — line-item detail (product, seller, price, freight)
+- `raw.order_reviews` — customer review scores (LEFT JOIN because not every order has a review)
+
+It produces one row per order-item with:
+- Foreign keys to dimensions (`customer_id`, `product_id`, `seller_id`)
+- Measures (`price`, `freight_value`, `review_score`)
+- Three computed KPI flags:
+  - `on_time_flag` = 1 if delivered by the estimated date
+  - `satisfied_flag` = 1 if review score >= 4
+  - `perfect_order_flag` = 1 if both conditions met
+
+**Verification queries** at the end confirm row counts and sample data to ensure everything loaded correctly.

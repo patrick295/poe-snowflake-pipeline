@@ -1,3 +1,0 @@
-USE DATABASE poe_db;
-USE SCHEMA raw;
-USE WAREHOUSE poe_wh;

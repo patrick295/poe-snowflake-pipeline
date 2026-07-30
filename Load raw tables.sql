@@ -1,3 +1,5 @@
+--table creation and data loading
+
 CREATE TABLE raw.orders (
   order_id STRING, customer_id STRING, order_status STRING,
   order_purchase_timestamp TIMESTAMP, order_approved_at TIMESTAMP,
@@ -63,3 +65,36 @@ UNION ALL SELECT 'customers', COUNT(*) FROM raw.customers
 UNION ALL SELECT 'sellers', COUNT(*) FROM raw.sellers
 UNION ALL SELECT 'products', COUNT(*) FROM raw.products
 UNION ALL SELECT 'order_reviews', COUNT(*) FROM raw.order_reviews;
+
+
+
+
+
+**Here's what this file does, section by section:**
+
+**1. Create Raw Tables**
+
+Six tables are created in `POE_DB.RAW` to match the Olist e-commerce CSV files:
+
+- `raw.orders` — the central fact source: one row per order with timestamps for purchase, approval, shipping, and delivery
+- `raw.order_items` — line items linking orders to products/sellers with price and freight
+- `raw.customers` — customer demographics (city, state, zip)
+- `raw.sellers` — seller demographics
+- `raw.products` — product catalog with physical dimensions (carried through even though the star schema doesn't use them, because it's easier than skipping columns during COPY)
+- `raw.order_reviews` — customer review scores (1-5) that drive the `satisfied_flag`
+
+**2. Load Data from S3**
+
+```sql
+COPY INTO raw.orders FROM @raw.poe_stage/ecommerce/olist_orders_dataset.csv;
+```
+
+Each `COPY INTO` pulls a CSV from the external S3 stage into the corresponding table. The stage points to `s3://poe-test-analytics/raw/` and uses the `csv_format` file format (skip header, quote-enclosed fields).
+
+**3. Verification Queries**
+
+- `SELECT * ... LIMIT 20` — quick sanity check on the data shape
+- `SELECT COUNT(*)` — individual row counts per table
+- The `UNION ALL` query at the bottom gives a single-result summary of all table row counts, confirming the load was complete
+
+The commented-out `TRUNCATE TABLE` is there from a previous reload — useful if you need to wipe and re-load.
