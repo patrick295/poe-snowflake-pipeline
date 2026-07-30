@@ -1,3 +1,5 @@
+--table creation and data loading
+
 CREATE TABLE raw.orders (
   order_id STRING, customer_id STRING, order_status STRING,
   order_purchase_timestamp TIMESTAMP, order_approved_at TIMESTAMP,
