@@ -1,3 +1,7 @@
+
+
+— automation
+
 CREATE STREAM raw.orders_stream ON TABLE raw.orders;
 
 CREATE TASK analytics.refresh_fact_orders
